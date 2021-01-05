@@ -104,8 +104,9 @@ void Program::Showlist(){
 }
 void Program::RunProgram(EvalState &evalstate){//TODO//uncompleted
     if(first_line==-1)return;
-    for(auto obj=Lines.begin();obj!=Lines.end();obj++)
+    for(auto obj=Lines.begin();obj!=Lines.end();)
     {
+       // cout<<"q"<<endl;
         Statement* statement=obj->second.stmt;
         try {
             //if(is_ended==true)break;
@@ -118,14 +119,24 @@ void Program::RunProgram(EvalState &evalstate){//TODO//uncompleted
             TokenScanner scanner;
             if (scanner.getTokenType(errorex.getMessage()) == NUMBER)
             {
+               // cout<<"debug";
                 if (this->havecontained(stringToInteger(errorex.getMessage())) == true)
                 {
-                    obj = this->Lines.find(stringToInteger(errorex.getMessage()));
-                    obj--;
-                    continue;
-                } else error("LINE NUMBER ERROR");
+                    //if(stringToInteger(errorex.getMessage())==10)cout<<"10"<<endl;
+                    //cout<<"debug";
+                   obj = this->Lines.find(stringToInteger(errorex.getMessage()));
+                   continue;
+                  // obj--;
+                   // obj = this->Lines.find(10);obj--;
+                  // obj=Lines.
+                   //obj++;
+                   // continue;
+                }
+                else error("LINE NUMBER ERROR");
             }
             else error(message);
+
         }
+        obj++;
     }
 }
