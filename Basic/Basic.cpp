@@ -22,21 +22,22 @@
 using namespace std;
 
 /* Function prototypes */
-
+bool check_three(string token){if(token=="LET"||token=="INPUT"||token=="PRINT")return true;return false;}
 void processLine(string line, Program & program, EvalState & state);
 //20 INPUT n1
 //25 LET n1=n2
 /* Main program */
 
-int main() {
-   EvalState state;//一个存值的map
-   Program program;
-   //cout << "Stub implementation of BASIC" << endl;
+int main() 
+{
+   EvalState state;//一个存变量值的map
+   Program program;//一个存操作行的map
+   //cout << "Stub implementation of BASIC" << endl;//坑死了
    while (true)
    {
       try
       {
-         processLine(getLine(), program, state);//输入是靠GETLINE吗？
+         processLine(getLine(), program, state);
       } catch (ErrorException & ex)
       {
          //cerr << "Error: " << ex.getMessage() << endl;
@@ -67,23 +68,18 @@ void processLine(string line, Program & program, EvalState & state) {
    scanner.setInput(line);//
    string token; TokenType tokentype;
    if(!scanner.hasMoreTokens())return;
-   token=scanner.nextToken();//用完一次之后指针应该会移动，就像file的指针一样
+   token=scanner.nextToken();
    tokentype=scanner.getTokenType(token);
     if(tokentype == NUMBER)//常规版
     {
-
-        int linenumber;
-        try{
-            linenumber = stringToInteger(token);//得到line number
-        } catch (...) {
-            error("SYNTAX ERROR");
-        }
+        int  linenumber = stringToInteger(token);//得到line number
         if(!scanner.hasMoreTokens())
         {
             program.removeSourceLine(linenumber);//执行删除
             return;
         }
-        try{
+        try
+        {
             Statement *stmt = parseStatement(line,scanner);
             program.addSourceLine(linenumber,line);
             program.setParsedStatement(linenumber,stmt);//执行时才会报错
@@ -93,17 +89,14 @@ void processLine(string line, Program & program, EvalState & state) {
         }
     }
     //LET PRINT END INPUT REM
-    if(tokentype==WORD)//都不进入LIST的表里,也就是不进入program
+    if(tokentype==WORD)
     {
-        //TODO
-        if(token=="LET"||token=="INPUT"||token=="PRINT")
+        if(check_three(token))
         {
-           // scanner.setInput(line);
-           scanner.saveToken(token);///////
+           scanner.saveToken(token);
             try {
                 Statement *stmt=parseStatement(line,scanner);
                 stmt->execute(state);
-                //delete stmt;
             }
             catch (ErrorException &error)
             {
@@ -113,22 +106,15 @@ void processLine(string line, Program & program, EvalState & state) {
                 if(error.getMessage()=="LINE NUMBER ERROR"){throw  ErrorException (error.getMessage());}
                 throw  ErrorException ("SYNTAX ERROR");
             }
-            //catch (...) {
-               // cout<<"SYNTAX ERROR"<<endl;return;
-           // }
            return;
         }
-        //if(token=="INPUT"){}
-        //if(token=="PRINT"){}
-
         if(token=="RUN")
         {
             if(scanner.hasMoreTokens()==true){
-               // cout<<"SYNTAX ERROR"<<endl;return;
                error("SYNTAX ERROR");
             }
-            //program.RunProgram();
-            try {
+            try 
+            {
                 program.RunProgram(state);
                 return;
             }
@@ -143,19 +129,21 @@ void processLine(string line, Program & program, EvalState & state) {
             }
             catch(...){cout<<"WKY 你的程序出问题了";}
         }
-        if(token=="LIST"){
+        if(token=="LIST")
+        {
             if(scanner.hasMoreTokens()==true){
                 error("SYNTAX ERROR");
             }
             program.Showlist();
             return ;
         }
-        if(token=="CLEAR"){
+        if(token=="CLEAR")
+        {
             if(scanner.hasMoreTokens()==true){
                 error("SYNTAX ERROR");
             }
             program.clear();
-            state.clear();
+            state.clear();//这里曾经出了一个BUG
             return;
         }
         if(token=="QUIT"){
@@ -174,13 +162,6 @@ void processLine(string line, Program & program, EvalState & state) {
         //cout<<"SYNTAX ERROR"<<endl;return;
         throw ErrorException("SYNTAX ERROR");
     }
-
-
-
-
-   //Expression *exp = parseExp(scanner);
-   //int value = exp->eval(state);
-   //cout << value << endl;
-   //delete exp;
+    if(tokentype!=NUMBER&&tokentype!=WORD){error("SYNTAX ERROR");};
 }
 //map<int,bool>line_is_delete;想多了，DELETE之后还是可以继续使用
