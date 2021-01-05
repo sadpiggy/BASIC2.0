@@ -48,7 +48,7 @@ Expression *newparseExp(TokenScanner & scanner) {
             Expression *right=newparseExp(scanner);
             return new CompoundExp(op,exp,right);
         }
-        if(token=="+"||token=="-"||token=="*"||token=="/")
+        if(token=="+"||token=="-"||token=="*"||token=="/")//这里应该是用不到的了，之前我以为READE有问题，所以写了这个，但好像没问题·，滑舌天竺了
         {
             string op;
             while(true)
@@ -62,7 +62,7 @@ Expression *newparseExp(TokenScanner & scanner) {
             return new CompoundExp(op,exp,right);
         }
     }
-  error("SYNTAX ERROR");//我在写什么鬼？
+  error("SYNTAX ERROR");
 }
 /*
  * Implementation notes: readE
@@ -135,7 +135,7 @@ Statement *parseStatement(string line,TokenScanner & scanner)
     string token=scanner.nextToken();
     TokenType tokenType=scanner.getTokenType(token);
     Expression* expression= nullptr;
-    scanner.ignoreWhitespace();scanner.scanNumbers();//引用前已经初始化过了，现在应该没必要再初始化了。但是，如果我还是这样做了。会有报应马？
+    scanner.ignoreWhitespace();scanner.scanNumbers();
     if(tokenType!=WORD)error("SYNTAX ERROR");
     if(is_saved_words(token)==false)error("SYNTAX ERROR");
     if(token=="REM"){
@@ -170,7 +170,6 @@ Statement *parseStatement(string line,TokenScanner & scanner)
         if(expression->getType()==IDENTIFIER)
         {
             if(is_saved_words(expression->toString())==true)error("SYNTAX ERROR");
-            //if(is_saved_words(((CompoundExp* )expression)->getRHS()->toString())==true)error("SYNTAX ERROR");
             return new PRINT_Statement(expression);
         }
         if(is_four_op(((CompoundExp* )expression)->getOp()))return new PRINT_Statement(expression);
@@ -195,11 +194,6 @@ Statement *parseStatement(string line,TokenScanner & scanner)
     if(token=="IF")
     {
         if(scanner.hasMoreTokens()==false)error("SYNTAX ERROR");
-        /*Expression* expression=parseExp(scanner);
-        if(expression->getType()!=COMPOUND)error("SYNTAX ERROR");
-        string op=((CompoundExp*)expression)->getOp();
-        if(is_four_op(op)==false)error("SYNTAX ERROR");*/
-        //if(((CompoundExp*)expression)->getOp())
         Expression *expression=newparseExp(scanner);
         if(scanner.hasMoreTokens()==false)error("SYNTAX ERROR");
         string token=scanner.nextToken();
@@ -208,12 +202,9 @@ Statement *parseStatement(string line,TokenScanner & scanner)
         auto left=((CompoundExp*)expression)->getLHS();
         auto right=((CompoundExp*)expression)->getRHS();
         auto op=((CompoundExp*)expression)->getOp();
-       // return new GOTO_Statement(stringToInteger(token));
         return new IF_Statement(left,op,right,new GOTO_Statement(stringToInteger(token)));
     }
-    //cout<<"SYNTAX ERROR"<<endl;
     error("SYNTAX ERROR");
-    //if(token==""){}
 }
 
 int precedence(string token) {
