@@ -75,8 +75,15 @@ void INPUT_Statement::execute(EvalState &state)
         {
 
             if(scanner.hasMoreTokens()){cout<<"INVALID NUMBER"<<endl<<" ? ";continue;}
-            else{
-                state.setValue(var,stringToInteger(token));//may bug
+            else
+                {
+                    try {
+                        state.setValue(var,stringToInteger(token));//may bug
+                    }catch(...){
+                        cout<<"INVALID NUMBER"<<endl<<" ? ";
+                        continue;
+                    }
+               // state.setValue(var,stringToInteger(token));//may bug
                 break;
             }
         }
@@ -86,7 +93,7 @@ void INPUT_Statement::execute(EvalState &state)
             token=scanner.nextToken();token_type=scanner.getTokenType(token);
             if(token_type==NUMBER){
                 if(scanner.hasMoreTokens()==false){
-                    state.setValue(var,stringToInteger(token));
+                    state.setValue(var,-stringToInteger(token));
                     break;
                 }
             }
