@@ -26,6 +26,7 @@ void END_Statement::execute(EvalState &state) {
 void REM_Statement::execute(EvalState &state){}
 void GOTO_Statement:: execute(EvalState &state)
 {
+   // cout<<"debug";
     string line=integerToString(To_line);
     error(line);
 }
@@ -56,6 +57,7 @@ void PRINT_Statement::execute(EvalState &state) {
 }
 void INPUT_Statement::execute(EvalState &state)
 {
+    //cout<<"debug";
     string in_line;int value;string var=expression->toString();
     cout<<" ? ";
     //in_line=getline();
@@ -92,7 +94,7 @@ void INPUT_Statement::execute(EvalState &state)
         }
         //cout<<"mid";
         //error("INVALID NUMBER");
-        cout<<"INVALID NUMBER"<<endl;
+        cout<<"INVALID NUMBER"<<endl<<" ? ";
 
     }
 }
@@ -106,7 +108,9 @@ void IF_Statement::execute(EvalState &state)
         if(left>=right)return;
     }
     if(op==">"){
-        if(left<=right)return;
+        //cout<<"debug";
+        if(left<=right){/*cout<<"debug";*/return;}
     }
+    //cout<<"debug";
     GO_to->execute(state);
 }
