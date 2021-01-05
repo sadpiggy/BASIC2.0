@@ -23,7 +23,6 @@ Statement::~Statement() {
 void END_Statement::execute(EvalState &state) {
     error("is_ended");
 }
-void REM_Statement::execute(EvalState &state){}
 void GOTO_Statement:: execute(EvalState &state)
 {
    // cout<<"debug";
@@ -60,9 +59,6 @@ void INPUT_Statement::execute(EvalState &state)
     //cout<<"debug";
     string in_line;int value;string var=expression->toString();
     cout<<" ? ";
-    //in_line=getline();
-   // in_line=getLine();
-    //TokenScanner scanner(in_line);
     TokenScanner scanner;
     string token; TokenType token_type;
     scanner.ignoreWhitespace(); scanner.scanNumbers();
